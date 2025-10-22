@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pasukan Generasi Bangsa</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #2ecc71, #ffffff);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .login-container, .dashboard {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .login-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 300px;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #2ecc71;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar button {
+      background: #2ecc71;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100px;
+    }
+
+    .content {
+      margin-left: 130px;
+      padding: 20px;
+    }
+
+    #clock {
+      font-size: 2em;
+      color: #2c3e50;
+    }
+
+    .calculator {
+      display: grid;
+      grid-template-columns: repeat(4, 70px);
+      gap: 10px;
+    }
+
+    .calculator input {
+      grid-column: span 4;
+      padding: 15px;
+      font-size: 1.2em;
+      text-align: right;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .calculator button {
+      padding: 15px;
+      font-size: 1.2em;
+      border-radius: 8px;
+      border: none;
+      background: #2ecc71;
+      color: white;
+      cursor: pointer;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: #2c3e50;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container" id="login">
+    <div class="login-box">
+      <h2>Login</h2>
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="login()">Masuk</button>
+    </div>
+  </div>
+
+  <div class="dashboard" id="dashboard" style="display: none;">
+    <div class="sidebar">
+      <button onclick="showContent('clock')">Jam</button>
+      <button onclick="showContent('calc')">Kalkulator</button>
+      <button onclick="showContent('calendar')">Kalender</button>
+      <button onclick="logout()">Keluar</button>
+    </div>
+
+    <div class="content" id="mainContent">
+      <h1>Welcome!</h1>
+    </div>
+  </div>
+
+  <footer>© Pasukan Generasi Bangsa 🇮🇩</footer>
+
+  <script src="credentials.js"></script>
+  <script>
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      if (user === credentials.username && pass === credentials.password) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("dashboard").style.display = "flex";
+        showClock();
+      } else {
+        alert("Username atau Password salah!");
+      }
+    }
+
+    function logout() {
+      document.getElementById("dashboard").style.display = "none";
+      document.getElementById("login").style.display = "flex";
+    }
+
+    function showContent(type) {
+      const main = document.getElementById("mainContent");
+      main.innerHTML = "";
+      if (type === "clock") showClock();
+      if (type === "calc") showCalculator();
+      if (type === "calendar") showCalendar();
+    }
+
+    function showClock() {
+      const main = document.getElementById("mainContent");
+      main.innerHTML = '<div id="clock"></div>';
+      function updateClock() {
+        const now = new Date();
+        const time = now.toLocaleTimeString();
+        const date = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById("clock").innerHTML = `${time}<br>${date}`;
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
+
+    function showCalculator() {
+      const main = document.getElementById("mainContent");
+      main.innerHTML = `
+        <div class="calculator">
+          <input type="text" id="calcDisplay" readonly>
+          <button onclick="appendCalc('7')">7</button>
+          <button onclick="appendCalc('8')">8</button>
+          <button onclick="appendCalc('9')">9</button>
+          <button onclick="appendCalc('÷')">÷</button>
+          <button onclick="appendCalc('4')">4</button>
+          <button onclick="appendCalc('5')">5</button>
+          <button onclick="appendCalc('6')">6</button>
+          <button onclick="appendCalc('×')">×</button>
+          <button onclick="appendCalc('1')">1</button>
+          <button onclick="appendCalc('2')">2</button>
+          <button onclick="appendCalc('3')">3</button>
+          <button onclick="appendCalc('−')">−</button>
+          <button onclick="appendCalc('0')">0</button>
+          <button onclick="appendCalc('.')">.</button>
+          <button onclick="calculate()">=</button>
+          <button onclick="appendCalc('+')">+</button>
+          <button onclick="clearCalc()">C</button>
+        </div>`;
+    }
+
+    function appendCalc(value) {
+      const disp = document.getElementById("calcDisplay");
+      disp.value += value;
+    }
+
+    function clearCalc() {
+      document.getElementById("calcDisplay").value = "";
+    }
+
+    function calculate() {
+      const disp = document.getElementById("calcDisplay");
+      let expr = disp.value.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+      try {
+        disp.value = eval(expr);
+      } catch {
+        disp.value = "Error";
+      }
+    }
+
+    function showCalendar() {
+      const main = document.getElementById("mainContent");
+      const now = new Date();
+      main.innerHTML = `<h2>${now.toLocaleDateString('id-ID', { year: 'numeric', month: 'long' })}</h2>`;
+    }
+  </script>
+</body>
+</html>
